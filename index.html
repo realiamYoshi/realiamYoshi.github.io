@@ -1,15 +1,14 @@
 <!DOCTYPE HTML>
+<html>
 <head>
   <title>iamYoshi's Offical Website Only In The World - Links</title>
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-<!--This was made by iamYoshi
-So please do not take this code and claim to be yours, it would be very disrespectful to me, but you can help me fix something if u could report the issue onto the github repo-->
-
 <div class="video-background">
   <iframe 
+    id="vimeo-player"
     src="https://player.vimeo.com/video/1194070125?autoplay=1&loop=1&muted=1&background=1&badge=0&autopause=0&app_id=58479"
     frameborder="0"
     allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
@@ -18,6 +17,25 @@ So please do not take this code and claim to be yours, it would be very disrespe
 </div>
 
 <script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+  // Grab the iframe element by its ID
+  const iframe = document.getElementById('vimeo-player');
+  const player = new Vimeo.Player(iframe);
+
+  // Function to unmute the audio on the first user interaction
+  function enableAudio() {
+    player.setMuted(0).then(function() {
+      // Audio is now unmuted successfully!
+      // Remove the event listener so it doesn't keep firing on every click
+      window.removeEventListener('click', enableAudio);
+    }).catch(function(error) {
+      console.error('Audio playback failed:', error);
+    });
+  }
+
+  // Listen for the first click anywhere on the page
+  window.addEventListener('click', enableAudio);
+</script>
 
 </body>
 </html>
