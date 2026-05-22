@@ -10,6 +10,12 @@
 # I can use Vimeo instead of local files so I can bypass the default browser autoplay policy, which requires user interaction to start audio playback. By using Vimeo's player, I can set the video to autoplay and loop without being muted, and then unmute it on the first user interaction.
 </div>
 
+<div id="enter-overlay" class="splash-screen">
+  <div class="enter-content">
+    <button id="enter-btn">CLICK TO ENTER</button>
+  </div>
+</div>
+
 <div class="video-background-container">
   <div class="video-background" id="vimeo-player">
     </div>
@@ -25,14 +31,13 @@
   ];
 
   let currentTrackIndex = 0;
-  let isUnmutedByPlayer = false;
 
   // Configuration options for background autoplay execution
   const options = {
     id: videoSequence[currentTrackIndex],
     autoplay: true,
-    muted: true, // Must start at 1 to smash the default browser block policy
-    loop: false, // Turned off loop here so it triggers the 'ended' logic instead!
+    muted: true, // Must start at 1 to smash through the browser policy blocks
+    loop: false, // Turned off loop here so it triggers our sequential 'ended' logic instead!
     background: true,
     responsive: true
   };
@@ -41,20 +46,30 @@
   const playerContainer = document.getElementById('vimeo-player');
   const player = new Vimeo.Player(playerContainer, options);
 
-  // Function to unmute the audio on the first user interaction
-  function enableAudio() {
-    isUnmutedByPlayer = true;
-    player.setMuted(0).then(function() {
-      // Audio is now unmuted successfully!
-      // Remove the event listener so it doesn't keep firing on every click
-      window.removeEventListener('click', enableAudio);
-    }).catch(function(error) {
-      console.error('Shit, audio playback failed:', error);
-    });
-  }
+  // Grab our new UI interaction elements
+  const enterOverlay = document.getElementById('enter-overlay');
+  const enterBtn = document.getElementById('enter-btn');
 
-  // Listen for the first click anywhere on the page
-  window.addEventListener('click', enableAudio);
+  // Triggered the absolute instant the user smashes that enter control
+  enterBtn.addEventListener('click', function() {
+    // 1. Smash the overlay completely out of sight
+    enterOverlay.classList.add('fade-out');
+    
+    // Completely remove it from layout calculations once the fade animation wraps up
+    setTimeout(function() {
+      enterOverlay.style.display = 'none';
+    }, 500); // Matches the 0.5s CSS transition speed perfectly
+
+    // 2. Unmute the audio sequence tracking array
+    player.setMuted(0).then(function() {
+      // Audio engine is now fully live and unmuted, play the sequence!
+      player.play();
+    }).catch(function(error) {
+      console.error('Shit, audio initialization failed:', error);
+      // Fallback play trigger just in case
+      player.play();
+    });
+  });
 
   // The core automated sequencing engine
   player.on('ended', function() {
@@ -63,13 +78,9 @@
     // Check if there are still numbers remaining in our sequence array
     if (currentTrackIndex < videoSequence.length) {
       player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
-        // Fuck yeah, next track loaded into slot. Ensure it plays instantly
+        // Fuck yeah, next track loaded into slot.
         player.play();
-        
-        // If the user already clicked earlier, make sure the new video stays unmuted!
-        if (isUnmutedByPlayer) {
-          player.setMuted(0);
-        }
+        player.setMuted(0); // Keeping the audio line open and hot
       }).catch(function(error) {
         console.error('Shit, next video failed to load:', error);
       });
@@ -78,9 +89,7 @@
       currentTrackIndex = 0;
       player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
         player.play();
-        if (isUnmutedByPlayer) {
-          player.setMuted(0);
-        }
+        player.setMuted(0);
       });
     }
   });

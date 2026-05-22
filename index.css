@@ -34,5 +34,48 @@
   left: 0;
   width: 100% !important;
   height: 100% !important;
-  pointer-events: none; /* Stops the video frame from blocking touch or click mechanics on your page layers */
+  pointer-events: none;
+}
+
+/* Full-screen sleek splash screen layer */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000; /* Solid black to mask the background video until clicked */
+  z-index: 9999; /* Ensures it sits absolutely on top of everything else */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease-in-out; /* Smooth fade effect */
+  opacity: 1;
+}
+
+/* When this class gets added by JS, the overlay melts away nicely */
+.splash-screen.fade-out {
+  opacity: 0;
+}
+
+/* Enter Page Call-To-Action Button Mechanics */
+#enter-btn {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-family: 'Courier New', Courier, monospace; /* Keeps that clean minimalist look */
+  font-weight: bold;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+/* Quick hover feedback sequence */
+#enter-btn:hover {
+  background-color: #ffffff;
+  color: #000000;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
 }
