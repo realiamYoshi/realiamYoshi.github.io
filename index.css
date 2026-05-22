@@ -2,21 +2,20 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   z-index: -1;
   overflow: hidden;
   pointer-events: none; /* stops video from blocking clicks on your page */
   background-color: #000;
 }
 
-/* Updated selector to target the wrapper player div and its inner iframe dynamically */
-.video-background div,
+/* This fixes the black screen by forcing Vimeo's auto-generated frames to scale perfectly to the viewport */
 .video-background iframe {
-  width: 100vw;
-  height: 56.25vw;   /* 16:9 ratio */
-  min-height: 100vh;
-  min-width: 177.77vh;
+  width: 100vw !important;
+  height: 56.25vw !important; /* 16:9 ratio precision */
+  min-height: 100vh !important;
+  min-width: 177.77vh !important;
   position: absolute;
   top: 50%;
   left: 50%;
