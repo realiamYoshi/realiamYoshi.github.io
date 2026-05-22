@@ -7,8 +7,11 @@
   z-index: -1;
   overflow: hidden;
   pointer-events: none; /* stops video from blocking clicks on your page */
+  background-color: #000;
 }
 
+/* Updated selector to target the wrapper player div and its inner iframe dynamically */
+.video-background div,
 .video-background iframe {
   width: 100vw;
   height: 56.25vw;   /* 16:9 ratio */

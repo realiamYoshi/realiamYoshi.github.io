@@ -6,38 +6,81 @@
 </head>
 <body>
 
-<!--This was made by iamYoshi
-So please do not take this code and claim to be yours, it would be very disrespectful to me, but you can help me fix something if u could report the issue onto the github repo-->
+# I can use Vimeo instead of local files so I can bypass the default browser autoplay policy, which requires user interaction to start audio playback. By using Vimeo's player, I can set the video to autoplay and loop without being muted, and then unmute it on the first user interaction.
 
 <div class="video-background">
-  <iframe 
-    id="vimeo-player"
-    src="https://player.vimeo.com/video/1194070125?autoplay=1&loop=1&muted=1&background=1&badge=0&autopause=0&app_id=58479"
-    frameborder="0"
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-    referrerpolicy="strict-origin-when-cross-origin"
-  ></iframe>
+  <div id="vimeo-player"></div>
 </div>
 
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-  // Grab the iframe element by its ID
-  const iframe = document.getElementById('vimeo-player');
-  const player = new Vimeo.Player(iframe);
+  // The exact sequence of numbers extracted from your layout, boss man!
+  const videoSequence = [
+    1194070125, // First video
+    1194831059, // Second video (Playboi Carti - Celine Molly My Bean [guitar cover])
+    1194831731  // Third video (Playboi Carti - Molly (Destxmido Remix))
+  ];
+
+  let currentTrackIndex = 0;
+  let isUnmutedByPlayer = false;
+
+  // Configuration options for background autoplay execution
+  const options = {
+    id: videoSequence[currentTrackIndex],
+    autoplay: true,
+    muted: true, // Must start at 1 to smash the default browser block policy
+    loop: false, // Turned off loop here so it triggers the 'ended' logic instead!
+    background: true,
+    responsive: true
+  };
+
+  // Grab the iframe element by its ID (Instantiate the video logic engine)
+  const playerContainer = document.getElementById('vimeo-player');
+  const player = new Vimeo.Player(playerContainer, options);
 
   // Function to unmute the audio on the first user interaction
   function enableAudio() {
+    isUnmutedByPlayer = true;
     player.setMuted(0).then(function() {
       // Audio is now unmuted successfully!
       // Remove the event listener so it doesn't keep firing on every click
       window.removeEventListener('click', enableAudio);
     }).catch(function(error) {
-      console.error('Audio playback failed:', error);
+      console.error('Shit, audio playback failed:', error);
     });
   }
 
   // Listen for the first click anywhere on the page
   window.addEventListener('click', enableAudio);
+
+  // The core automated sequencing engine
+  player.on('ended', function() {
+    currentTrackIndex++;
+    
+    // Check if there are still numbers remaining in our sequence array
+    if (currentTrackIndex < videoSequence.length) {
+      player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
+        // Fuck yeah, next track loaded into slot. Ensure it plays instantly
+        player.play();
+        
+        // If the user already clicked earlier, make sure the new video stays unmuted!
+        if (isUnmutedByPlayer) {
+          player.setMuted(0);
+        }
+      }).catch(function(error) {
+        console.error('Shit, next video failed to load:', error);
+      });
+    } else {
+      // Loop back to the very first number (index 0) to keep the background infinite!
+      currentTrackIndex = 0;
+      player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
+        player.play();
+        if (isUnmutedByPlayer) {
+          player.setMuted(0);
+        }
+      });
+    }
+  });
 </script>
 
 </body>
