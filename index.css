@@ -1,4 +1,7 @@
-Index · CSS
+#autoplay-policy-notice {
+  display: none !important;
+}
+ 
 .video-background-container {
   position: fixed;
   top: 0;
@@ -314,4 +317,3 @@ Index · CSS
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transform: scale(1.02);
 }
- 
