@@ -22,7 +22,7 @@
 .video-background {
   position: relative;
   width: 100vw;
-  height: 56.25vw; /* 16:9 ratio precision */
+  height: 56.25vw;
   min-height: 100vh;
   min-width: 177.77vh;
 }
@@ -34,7 +34,7 @@
   left: 0;
   width: 100% !important;
   height: 100% !important;
-  pointer-events: none;
+  pointer-events: none; /* Keeps clicks focused strictly on your link cards */
 }
 
 /* Full-screen sleek splash screen layer */
@@ -93,12 +93,11 @@
   box-sizing: border-box;
 }
 
-/* Fully Transparent Profile Frame Matrix */
 .profile-card {
-  background: transparent !important; /* Completely zeroed out dark layer background, boss man! */
-  backdrop-filter: none !important; /* Stripped out the blur vector so it's fully crystal clear */
+  background: transparent !important;
+  backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  border: none !important; /* Destroyed the border frame lines entirely */
+  border: none !important;
   padding: 35px;
   width: 100%;
   max-width: 420px;
@@ -113,7 +112,6 @@
   transform: translateY(-2px);
 }
 
-/* Profile Elements Styling Matrix */
 .profile-avatar {
   width: 85px;
   height: 85px;
@@ -139,7 +137,7 @@
   margin: 0 0 5px 0;
   font-weight: 700;
   letter-spacing: 1px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); /* Added text shadows so your links remain fully readable over bright video shots */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .profile-subtitle {
@@ -154,7 +152,86 @@
   height: 1px;
   background: rgba(255, 255, 255, 0.2);
   width: 100%;
-  margin-bottom: 20px;
+  margin: 15px 0;
+}
+
+/* --- CONTROL PANEL BUTTON INTERFACE --- */
+.control-action-panel {
+  padding: 5px 0;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px 24px;
+  width: 100%;
+  font-size: 0.8rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* --- AUDIO MIXER CONSOLE STYLING --- */
+.audio-mixer-console {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.5); /* Boosted opacity matrix for reliable slider text visibility */
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mixer-channel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.mixer-channel label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #cccccc;
+  font-family: 'Courier New', Courier, monospace;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.mixer-channel input[type="range"] {
+  width: 100%;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+}
+
+.mixer-channel input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.mixer-channel input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
 }
 
 /* Links Grid Arrangement */
@@ -164,9 +241,8 @@
   gap: 12px;
 }
 
-/* Semi-transparent interactive link nodes that sit cleanly on top of the moving video background */
 .social-icon-link {
-  background: rgba(0, 0, 0, 0.4); /* Dark translucent fill just for the button grids to ensure contrast */
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: #ffffff;
@@ -174,7 +250,7 @@
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
-  backdrop-filter: blur(4px); /* Light blur exclusive to the internal button capsules */
+  backdrop-filter: blur(4px);
   transition: all 0.2s ease-in-out;
   display: flex;
   justify-content: center;
