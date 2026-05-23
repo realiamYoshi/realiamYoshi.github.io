@@ -1,3 +1,6 @@
+
+raw
+Index · HTML
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -53,9 +56,11 @@
  
     <div class="profile-divider"></div>
  
-    <!-- Skip button -->
+    <!-- Playback controls -->
     <div class="control-action-panel">
-      <button id="skip-track-btn" class="action-btn">⏭ SKIP VIDEO</button>
+      <button id="prev-track-btn" class="action-btn-sm">⏮ PREV</button>
+      <button id="loop-btn" class="action-btn-sm" data-active="false">⟳ LOOP</button>
+      <button id="skip-track-btn" class="action-btn-sm">⏭ SKIP</button>
     </div>
  
     <div class="profile-divider"></div>
@@ -104,6 +109,9 @@
   const enterOverlay = document.getElementById('enter-overlay');
   const enterBtn = document.getElementById('enter-btn');
   const skipBtn = document.getElementById('skip-track-btn');
+  const prevBtn = document.getElementById('prev-track-btn');
+  const loopBtn = document.getElementById('loop-btn');
+  let isLooping = false;
  
   const videoVolSlider = document.getElementById('video-vol');
   const videoVolVal = document.getElementById('video-vol-val');
@@ -188,6 +196,10 @@
  
   // Skip logic
   function advanceVideoTrack() {
+    if (isLooping) {
+      loadAndPlay(videoSequence[currentTrackIndex]);
+      return;
+    }
     currentTrackIndex++;
     if (currentTrackIndex >= videoSequence.length) {
       videoSequence.sort(() => Math.random() - 0.5);
@@ -199,6 +211,25 @@
       player.loadVideo(videoSequence[currentTrackIndex]);
     }
   }
+ 
+  function previousVideoTrack() {
+    currentTrackIndex--;
+    if (currentTrackIndex < 0) currentTrackIndex = videoSequence.length - 1;
+    if (hasEntered) {
+      loadAndPlay(videoSequence[currentTrackIndex]);
+    } else {
+      player.loadVideo(videoSequence[currentTrackIndex]);
+    }
+  }
+ 
+  skipBtn.addEventListener('click', advanceVideoTrack);
+  prevBtn.addEventListener('click', previousVideoTrack);
+  loopBtn.addEventListener('click', function() {
+    isLooping = !isLooping;
+    loopBtn.dataset.active = isLooping;
+    loopBtn.textContent = isLooping ? '⟳ LOOP ON' : '⟳ LOOP';
+  });
+  player.on('ended', advanceVideoTrack);
  
   // Timestamp display
   const videoCurrent = document.getElementById('video-current');
