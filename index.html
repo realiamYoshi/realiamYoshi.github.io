@@ -16,6 +16,10 @@
   </div>
 </div>
 
+<audio id="bg-music-player" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
 <div class="profile-card-container">
   <div class="profile-card">
     <div class="profile-avatar">
@@ -25,6 +29,25 @@
     <h1 class="profile-title">Yoshi</h1>
     <p class="profile-subtitle">Developer | Verified</p>
     
+    <div class="profile-divider"></div>
+
+    <div class="control-action-panel">
+      <button id="skip-track-btn" class="action-btn">SKIP BACKGROUND VIDEO</button>
+    </div>
+
+    <div class="profile-divider"></div>
+
+    <div class="audio-mixer-console">
+      <div class="mixer-channel">
+        <label for="video-vol">Video Volume</label>
+        <input type="range" id="video-vol" min="0" max="1" step="0.05" value="0.5">
+      </div>
+      <div class="mixer-channel">
+        <label for="music-vol">Music Volume</label>
+        <input type="range" id="music-vol" min="0" max="1" step="0.05" value="0.5">
+      </div>
+    </div>
+
     <div class="profile-divider"></div>
     
     <div class="social-links-grid">
@@ -63,67 +86,97 @@
 
   let currentTrackIndex = 0;
 
-  // Configuration options for background autoplay execution
+  // Swapped out background: true parameter so the API unblocks volume modulation hooks cleanly!
   const options = {
     id: videoSequence[currentTrackIndex],
     autoplay: true,
     muted: true, // Must start at 1 to smash through browser policy blocks
-    loop: false, // Turned off loop here so it triggers our sequential 'ended' logic instead!
-    background: true,
-    responsive: true
+    loop: false,
+    controls: false, // Disables bottom control layout bar
+    playsinline: true
   };
 
-  // Grab the iframe element by its ID (Instantiate the video logic engine)
+  // Grab elements by their IDs
   const playerContainer = document.getElementById('vimeo-player');
   const player = new Vimeo.Player(playerContainer, options);
+  const bgMusic = document.getElementById('bg-music-player');
 
-  // Grab our UI interaction elements
   const enterOverlay = document.getElementById('enter-overlay');
   const enterBtn = document.getElementById('enter-btn');
+  const skipBtn = document.getElementById('skip-track-btn');
+  
+  const videoVolSlider = document.getElementById('video-vol');
+  const musicVolSlider = document.getElementById('music-vol');
+
+  // Set initial internal volume configurations to 0.5 (50%)
+  bgMusic.volume = 0.5;
 
   // Triggered the absolute instant the user smashes that enter control
   enterBtn.addEventListener('click', function() {
-    // 1. Smash the overlay completely out of sight
     enterOverlay.classList.add('fade-out');
     
-    // Completely remove it from layout calculations once the fade animation wraps up
     setTimeout(function() {
       enterOverlay.style.display = 'none';
-    }, 500); // Matches the 0.5s CSS transition speed perfectly
+    }, 500);
 
-    // 2. Unmute the audio sequence tracking array
+    // 1. Unmute and play the background video mix channel
     player.setMuted(0).then(function() {
-      // Audio engine is now fully live and unmuted, play the sequence!
+      player.setVolume(videoVolSlider.value);
       player.play();
     }).catch(function(error) {
-      console.error('Shit, audio initialization failed:', error);
+      console.error('Shit, video audio failed to spin up:', error);
       player.play();
+    });
+
+    // 2. Fire up the independent background music pipeline channel simultaneously
+    bgMusic.play().catch(function(error) {
+      console.error('Shit, background music playback blocked:', error);
     });
   });
 
-  // The core automated sequencing engine
-  player.on('ended', function() {
+  // --- AUDIO CONTROLLER INPUT VECTOR INTERCEPTORS ---
+  // Real-time tracking loop for the Video Channel volume
+  videoVolSlider.addEventListener('input', function() {
+    const targetVolume = parseFloat(this.value);
+    player.setVolume(targetVolume).catch(function(error) {
+      console.error('Shit, could not alter vimeo node volume:', error);
+    });
+  });
+
+  // Real-time tracking loop for the Background Music Channel volume
+  musicVolSlider.addEventListener('input', function() {
+    bgMusic.volume = this.value;
+  });
+
+  // --- CORE SKIP INTERCEPT MODULE ---
+  function advanceVideoTrack() {
     currentTrackIndex++;
     
-    // Check if there are still numbers remaining in our sequence array
     if (currentTrackIndex < videoSequence.length) {
       player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
-        // Fuck yeah, next random track loaded into slot
         player.play();
-        player.setMuted(0); // Keeping the audio line open and hot
+        player.setMuted(0);
+        player.setVolume(videoVolSlider.value); // Syncs slider step immediately
       }).catch(function(error) {
         console.error('Shit, next video failed to load:', error);
       });
     } else {
-      // Once the full sequence runs through, reshuffle the numbers again for absolute randomness!
+      // Re-shuffle vector array to keep it completely dynamic
       videoSequence.sort(() => Math.random() - 0.5);
       currentTrackIndex = 0;
       player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
         player.play();
         player.setMuted(0);
+        player.setVolume(videoVolSlider.value);
       });
     }
-  });
+  }
+
+  // Hook skip handler to user click
+  skipBtn.addEventListener('click', advanceVideoTrack);
+
+  // Auto advance tracking loop hook
+  player.on('ended', advanceVideoTrack);
 </script>
 
 </body>
