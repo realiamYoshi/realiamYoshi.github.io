@@ -1,190 +1,130 @@
-/* Totally hides the raw policy text from the UI while keeping it 100% preserved in your file source */
-#autoplay-policy-notice {
-  display: none !important;
-}
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>iamYoshi's Offical Website Only In The World - Links</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
 
-/* Master scaling wrapper that adapts to the user's viewport cleanly */
-.video-background-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-  background-color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
+<div id="autoplay-policy-notice">
+# I can use Vimeo instead of local files so I can bypass the default browser autoplay policy, which requires user interaction to start audio playback. By using Vimeo's player, I can set the video to autoplay and loop without being muted, and then unmute it on the first user interaction.
+</div>
 
-/* 16:9 proportional aspect ratio logic block to guarantee perfect scaling on all mobile/desktop devices */
-.video-background {
-  position: relative;
-  width: 100vw;
-  height: 56.25vw; /* 16:9 ratio precision */
-  min-height: 100vh;
-  min-width: 177.77vh;
-}
+<div id="enter-overlay" class="splash-screen">
+  <div class="enter-content">
+    <button id="enter-btn">CLICK TO ENTER</button>
+  </div>
+</div>
 
-/* Forces the runtime injected Vimeo container frames to fill the responsive space perfectly */
-.video-background iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100% !important;
-  height: 100% !important;
-  pointer-events: none;
-}
+<div class="profile-card-container">
+  <div class="profile-card">
+    <div class="profile-avatar">
+      <div class="avatar-fallback">Y</div>
+    </div>
+    
+    <h1 class="profile-title">Yoshi</h1>
+    <p class="profile-subtitle">Developer | Verified</p>
+    
+    <div class="profile-divider"></div>
+    
+    <div class="social-links-grid">
+      <a href="#" class="social-icon-link" title="Discord">
+        <span>Discord</span>
+      </a>
+      <a href="#" class="social-icon-link" title="GitHub">
+        <span>GitHub</span>
+      </a>
+      <a href="#" class="social-icon-link" title="Instagram">
+        <span>Instagram</span>
+      </a>
+      <a href="#" class="social-icon-link" title="X">
+        <span>X</span>
+      </a>
+    </div>
+  </div>
+</div>
 
-/* Full-screen sleek splash screen layer */
-.splash-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #000000;
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.5s ease-in-out;
-  opacity: 1;
-}
+<div class="video-background-container">
+  <div class="video-background" id="vimeo-player">
+    </div>
+</div>
 
-.splash-screen.fade-out {
-  opacity: 0;
-}
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+  // The base sequence of numbers extracted from your layout, boss man!
+  let videoSequence = [
+    1194070125, // Video 1
+    1194831059, // Video 2 (Playboi Carti - Celine Molly My Bean [guitar cover])
+    1194831731  // Video 3 (Playboi Carti - Molly (Destxmido Remix))
+  ];
 
-#enter-btn {
-  background: transparent;
-  color: #ffffff;
-  border: 2px solid #ffffff;
-  padding: 15px 40px;
-  font-size: 1.2rem;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  letter-spacing: 3px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  outline: none;
-}
+  // Mathematical randomization engine - shuffles the numerical index completely on runtime boot
+  videoSequence.sort(() => Math.random() - 0.5);
 
-#enter-btn:hover {
-  background-color: #ffffff;
-  color: #000000;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-}
+  let currentTrackIndex = 0;
 
-/* --- PROFILE CARD MATRIX CENTER LAYOUT --- */
-.profile-card-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  pointer-events: none;
-  padding: 20px;
-  box-sizing: border-box;
-}
+  // Configuration options for background autoplay execution
+  const options = {
+    id: videoSequence[currentTrackIndex],
+    autoplay: true,
+    muted: true, // Must start at 1 to smash through browser policy blocks
+    loop: false, // Turned off loop here so it triggers our sequential 'ended' logic instead!
+    background: true,
+    responsive: true
+  };
 
-/* Fully Transparent Profile Frame Matrix */
-.profile-card {
-  background: transparent !important; /* Completely zeroed out dark layer background, boss man! */
-  backdrop-filter: none !important; /* Stripped out the blur vector so it's fully crystal clear */
-  -webkit-backdrop-filter: none !important;
-  border: none !important; /* Destroyed the border frame lines entirely */
-  padding: 35px;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  color: #ffffff;
-  pointer-events: auto;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  transition: transform 0.3s ease;
-}
+  // Grab the iframe element by its ID (Instantiate the video logic engine)
+  const playerContainer = document.getElementById('vimeo-player');
+  const player = new Vimeo.Player(playerContainer, options);
 
-.profile-card:hover {
-  transform: translateY(-2px);
-}
+  // Grab our UI interaction elements
+  const enterOverlay = document.getElementById('enter-overlay');
+  const enterBtn = document.getElementById('enter-btn');
 
-/* Profile Elements Styling Matrix */
-.profile-avatar {
-  width: 85px;
-  height: 85px;
-  margin: 0 auto 15px auto;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
+  // Triggered the absolute instant the user smashes that enter control
+  enterBtn.addEventListener('click', function() {
+    // 1. Smash the overlay completely out of sight
+    enterOverlay.classList.add('fade-out');
+    
+    // Completely remove it from layout calculations once the fade animation wraps up
+    setTimeout(function() {
+      enterOverlay.style.display = 'none';
+    }, 500); // Matches the 0.5s CSS transition speed perfectly
 
-.avatar-fallback {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #ffffff;
-  font-family: 'Courier New', Courier, monospace;
-}
+    // 2. Unmute the audio sequence tracking array
+    player.setMuted(0).then(function() {
+      // Audio engine is now fully live and unmuted, play the sequence!
+      player.play();
+    }).catch(function(error) {
+      console.error('Shit, audio initialization failed:', error);
+      player.play();
+    });
+  });
 
-.profile-title {
-  font-size: 1.8rem;
-  margin: 0 0 5px 0;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); /* Added text shadows so your links remain fully readable over bright video shots */
-}
+  // The core automated sequencing engine
+  player.on('ended', function() {
+    currentTrackIndex++;
+    
+    // Check if there are still numbers remaining in our sequence array
+    if (currentTrackIndex < videoSequence.length) {
+      player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
+        // Fuck yeah, next random track loaded into slot
+        player.play();
+        player.setMuted(0); // Keeping the audio line open and hot
+      }).catch(function(error) {
+        console.error('Shit, next video failed to load:', error);
+      });
+    } else {
+      // Once the full sequence runs through, reshuffle the numbers again for absolute randomness!
+      videoSequence.sort(() => Math.random() - 0.5);
+      currentTrackIndex = 0;
+      player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
+        player.play();
+        player.setMuted(0);
+      });
+    }
+  });
+</script>
 
-.profile-subtitle {
-  font-size: 0.9rem;
-  color: #e0e0e0;
-  margin: 0 0 20px 0;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-}
-
-.profile-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-/* Links Grid Arrangement */
-.social-links-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-/* Semi-transparent interactive link nodes that sit cleanly on top of the moving video background */
-.social-icon-link {
-  background: rgba(0, 0, 0, 0.4); /* Dark translucent fill just for the button grids to ensure contrast */
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #ffffff;
-  padding: 12px;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  backdrop-filter: blur(4px); /* Light blur exclusive to the internal button capsules */
-  transition: all 0.2s ease-in-out;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-}
-
-.social-icon-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transform: scale(1.02);
-}
+</body>
+</html>
