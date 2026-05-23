@@ -16,6 +16,34 @@
   </div>
 </div>
 
+<div class="profile-card-container">
+  <div class="profile-card">
+    <div class="profile-avatar">
+      <div class="avatar-fallback">Y</div>
+    </div>
+    
+    <h1 class="profile-title">Yoshi</h1>
+    <p class="profile-subtitle">Developer | Verified</p>
+    
+    <div class="profile-divider"></div>
+    
+    <div class="social-links-grid">
+      <a href="#" class="social-icon-link" title="Discord">
+        <span>Discord</span>
+      </a>
+      <a href="#" class="social-icon-link" title="GitHub">
+        <span>GitHub</span>
+      </a>
+      <a href="#" class="social-icon-link" title="Instagram">
+        <span>Instagram</span>
+      </a>
+      <a href="#" class="social-icon-link" title="X">
+        <span>X</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <div class="video-background-container">
   <div class="video-background" id="vimeo-player">
     </div>
@@ -23,12 +51,15 @@
 
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-  // The exact sequence of numbers extracted from your layout, boss man!
-  const videoSequence = [
-    1194070125, // First video
-    1194831059, // Second video (Playboi Carti - Celine Molly My Bean [guitar cover])
-    1194831731  // Third video (Playboi Carti - Molly (Destxmido Remix))
+  // The base sequence of numbers extracted from your layout, boss man!
+  let videoSequence = [
+    1194070125, // Video 1
+    1194831059, // Video 2 (Playboi Carti - Celine Molly My Bean [guitar cover])
+    1194831731  // Video 3 (Playboi Carti - Molly (Destxmido Remix))
   ];
+
+  // Mathematical randomization engine - shuffles the numerical index completely on runtime boot
+  videoSequence.sort(() => Math.random() - 0.5);
 
   let currentTrackIndex = 0;
 
@@ -36,7 +67,7 @@
   const options = {
     id: videoSequence[currentTrackIndex],
     autoplay: true,
-    muted: true, // Must start at 1 to smash through the browser policy blocks
+    muted: true, // Must start at 1 to smash through browser policy blocks
     loop: false, // Turned off loop here so it triggers our sequential 'ended' logic instead!
     background: true,
     responsive: true
@@ -46,7 +77,7 @@
   const playerContainer = document.getElementById('vimeo-player');
   const player = new Vimeo.Player(playerContainer, options);
 
-  // Grab our new UI interaction elements
+  // Grab our UI interaction elements
   const enterOverlay = document.getElementById('enter-overlay');
   const enterBtn = document.getElementById('enter-btn');
 
@@ -66,7 +97,6 @@
       player.play();
     }).catch(function(error) {
       console.error('Shit, audio initialization failed:', error);
-      // Fallback play trigger just in case
       player.play();
     });
   });
@@ -78,14 +108,15 @@
     // Check if there are still numbers remaining in our sequence array
     if (currentTrackIndex < videoSequence.length) {
       player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
-        // Fuck yeah, next track loaded into slot.
+        // Fuck yeah, next random track loaded into slot
         player.play();
         player.setMuted(0); // Keeping the audio line open and hot
       }).catch(function(error) {
         console.error('Shit, next video failed to load:', error);
       });
     } else {
-      // Loop back to the very first number (index 0) to keep the background infinite!
+      // Once the full sequence runs through, reshuffle the numbers again for absolute randomness!
+      videoSequence.sort(() => Math.random() - 0.5);
       currentTrackIndex = 0;
       player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
         player.play();
