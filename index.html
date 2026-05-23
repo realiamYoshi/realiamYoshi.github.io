@@ -16,10 +16,6 @@
   </div>
 </div>
  
-<audio id="bg-music-player" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
- 
 <div class="profile-card-container">
   <div class="profile-card">
     <div class="profile-avatar">
@@ -48,13 +44,7 @@
         </div>
         <input type="range" id="video-vol" min="0" max="1" step="0.01" value="0.5">
       </div>
-      <div class="mixer-channel">
-        <div class="mixer-row">
-          <label for="music-vol">Music</label>
-          <span class="vol-value" id="music-vol-val">50%</span>
-        </div>
-        <input type="range" id="music-vol" min="0" max="1" step="0.01" value="0.5">
-      </div>
+ 
     </div>
  
     <div class="profile-divider"></div>
@@ -106,16 +96,13 @@
  
   const playerContainer = document.getElementById('vimeo-player');
   const player = new Vimeo.Player(playerContainer, options);
-  const bgMusic = document.getElementById('bg-music-player');
  
   const enterOverlay = document.getElementById('enter-overlay');
   const enterBtn = document.getElementById('enter-btn');
   const skipBtn = document.getElementById('skip-track-btn');
  
   const videoVolSlider = document.getElementById('video-vol');
-  const musicVolSlider = document.getElementById('music-vol');
   const videoVolVal = document.getElementById('video-vol-val');
-  const musicVolVal = document.getElementById('music-vol-val');
   const nowPlayingTitle = document.getElementById('now-playing-title');
  
   bgMusic.volume = 0; // Start silent, fade in on enter
@@ -194,21 +181,7 @@
       });
     });
  
-    // Fade in bg music
-    bgMusic.volume = 0;
-    bgMusic.play().then(function() {
-      const target = parseFloat(musicVolSlider.value);
-      let vol = 0;
-      const steps = 30;
-      let i = 0;
-      const t = setInterval(function() {
-        i++;
-        bgMusic.volume = target * (i / steps);
-        if (i >= steps) clearInterval(t);
-      }, 30);
-    }).catch(function(e) {
-      console.error('Music play failed:', e);
-    });
+ 
   });
  
   // Volume sliders — live update with % display
@@ -220,12 +193,6 @@
         console.error('Video volume set failed:', e);
       });
     }
-  });
- 
-  musicVolSlider.addEventListener('input', function() {
-    const v = parseFloat(this.value);
-    musicVolVal.textContent = Math.round(v * 100) + '%';
-    bgMusic.volume = v;
   });
  
   // Skip logic
@@ -248,4 +215,3 @@
  
 </body>
 </html>
- 
