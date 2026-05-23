@@ -105,22 +105,6 @@
   const videoVolVal = document.getElementById('video-vol-val');
   const nowPlayingTitle = document.getElementById('now-playing-title');
  
-  bgMusic.volume = 0; // Start silent, fade in on enter
- 
-  // Smooth volume fade — avoids hard pops
-  function fadeVolume(getter, setter, targetVol, durationMs) {
-    const steps = 40;
-    const interval = durationMs / steps;
-    let step = 0;
- 
-    const tick = setInterval(async () => {
-      step++;
-      const current = typeof getter === 'function' ? await getter() : getter;
-      const next = current + (targetVol - current) * (step / steps);
-      typeof setter === 'function' ? setter(next) : (setter.volume = next);
-      if (step >= steps) clearInterval(tick);
-    }, interval);
-  }
  
   // Fetch and display the current video title
   function updateNowPlaying() {
