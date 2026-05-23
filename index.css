@@ -1,9 +1,4 @@
-/* Totally hides the raw policy text from the UI while keeping it 100% preserved in your file source */
-#autoplay-policy-notice {
-  display: none !important;
-}
-
-/* Master scaling wrapper that adapts to the user's viewport cleanly */
+Index · CSS
 .video-background-container {
   position: fixed;
   top: 0;
@@ -17,8 +12,7 @@
   align-items: center;
   overflow: hidden;
 }
-
-/* 16:9 proportional aspect ratio logic block to guarantee perfect scaling on all mobile/desktop devices */
+ 
 .video-background {
   position: relative;
   width: 100vw;
@@ -26,18 +20,16 @@
   min-height: 100vh;
   min-width: 177.77vh;
 }
-
-/* Forces the runtime injected Vimeo container frames to fill the responsive space perfectly */
+ 
 .video-background iframe {
   position: absolute;
   top: 0;
   left: 0;
   width: 100% !important;
   height: 100% !important;
-  pointer-events: none; /* Keeps clicks focused strictly on your link cards */
+  pointer-events: none;
 }
-
-/* Full-screen sleek splash screen layer */
+ 
 .splash-screen {
   position: fixed;
   top: 0;
@@ -52,11 +44,11 @@
   transition: opacity 0.5s ease-in-out;
   opacity: 1;
 }
-
+ 
 .splash-screen.fade-out {
   opacity: 0;
 }
-
+ 
 #enter-btn {
   background: transparent;
   color: #ffffff;
@@ -70,14 +62,14 @@
   transition: all 0.3s ease;
   outline: none;
 }
-
+ 
 #enter-btn:hover {
   background-color: #ffffff;
   color: #000000;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
 }
-
-/* --- PROFILE CARD MATRIX CENTER LAYOUT --- */
+ 
+/* --- PROFILE CARD --- */
 .profile-card-container {
   position: fixed;
   top: 0;
@@ -92,7 +84,7 @@
   padding: 20px;
   box-sizing: border-box;
 }
-
+ 
 .profile-card {
   background: transparent !important;
   backdrop-filter: none !important;
@@ -107,11 +99,11 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   transition: transform 0.3s ease;
 }
-
+ 
 .profile-card:hover {
   transform: translateY(-2px);
 }
-
+ 
 .profile-avatar {
   width: 85px;
   height: 85px;
@@ -124,14 +116,14 @@
   align-items: center;
   overflow: hidden;
 }
-
+ 
 .avatar-fallback {
   font-size: 2rem;
   font-weight: 600;
   color: #ffffff;
   font-family: 'Courier New', Courier, monospace;
 }
-
+ 
 .profile-title {
   font-size: 1.8rem;
   margin: 0 0 5px 0;
@@ -139,7 +131,7 @@
   letter-spacing: 1px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
-
+ 
 .profile-subtitle {
   font-size: 0.9rem;
   color: #e0e0e0;
@@ -147,69 +139,83 @@
   letter-spacing: 0.5px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
-
+ 
 .profile-divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.2);
   width: 100%;
   margin: 15px 0;
 }
-
-/* --- CONTROL PANEL BUTTON INTERFACE --- */
-.control-action-panel {
-  padding: 5px 0;
+ 
+/* --- NOW PLAYING --- */
+.now-playing-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
 }
-
-.action-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 12px 24px;
-  width: 100%;
-  font-size: 0.8rem;
+ 
+.now-playing-label {
+  font-size: 0.65rem;
+  letter-spacing: 2.5px;
+  color: rgba(255, 255, 255, 0.45);
   font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  text-transform: uppercase;
 }
-
-.action-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-1px);
+ 
+.now-playing-title {
+  font-size: 0.85rem;
+  color: #ffffff;
+  font-family: 'Courier New', Courier, monospace;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 340px;
+  /* subtle scroll animation for long titles */
+  display: block;
 }
-
-/* --- AUDIO MIXER CONSOLE STYLING --- */
+ 
+/* --- AUDIO MIXER --- */
 .audio-mixer-console {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: rgba(0, 0, 0, 0.5); /* Boosted opacity matrix for reliable slider text visibility */
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
-  padding: 15px;
+  padding: 16px 18px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
+ 
 .mixer-channel {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
+  gap: 6px;
 }
-
+ 
+.mixer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ 
 .mixer-channel label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: #cccccc;
   font-family: 'Courier New', Courier, monospace;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
-
+ 
+.vol-value {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Courier New', Courier, monospace;
+  min-width: 36px;
+  text-align: right;
+}
+ 
 .mixer-channel input[type="range"] {
   width: 100%;
   -webkit-appearance: none;
@@ -217,30 +223,74 @@
   height: 4px;
   border-radius: 2px;
   outline: none;
+  cursor: pointer;
 }
-
+ 
 .mixer-channel input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
   transition: transform 0.1s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
-
+ 
 .mixer-channel input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.25);
+  transform: scale(1.3);
 }
-
-/* Links Grid Arrangement */
+ 
+.mixer-channel input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+ 
+/* --- SKIP BUTTON --- */
+.control-action-panel {
+  padding: 2px 0;
+}
+ 
+.action-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px 24px;
+  width: 100%;
+  font-size: 0.78rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+ 
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+ 
+.action-btn:active {
+  transform: translateY(0);
+}
+ 
+/* --- SOCIAL LINKS --- */
 .social-links-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
-
+ 
 .social-icon-link {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -257,10 +307,11 @@
   align-items: center;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
-
+ 
 .social-icon-link:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transform: scale(1.02);
 }
+ 
