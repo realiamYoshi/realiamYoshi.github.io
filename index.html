@@ -44,7 +44,10 @@
         </div>
         <input type="range" id="video-vol" min="0" max="1" step="0.01" value="1">
       </div>
- 
+      <div class="timestamp-row">
+        <span id="video-current">0:00</span>
+        <span id="video-duration">0:00</span>
+      </div>
     </div>
  
     <div class="profile-divider"></div>
@@ -132,6 +135,9 @@
             if (i >= steps) clearInterval(t);
           }, 30);
           updateNowPlaying();
+          player.getDuration().then(function(dur) {
+            videoDuration.textContent = formatTime(dur);
+          });
         });
       });
     }).catch(function(e) {
@@ -192,6 +198,30 @@
       player.loadVideo(videoSequence[currentTrackIndex]);
     }
   }
+ 
+  // Timestamp display
+  const videoCurrent = document.getElementById('video-current');
+  const videoDuration = document.getElementById('video-duration');
+ 
+  function formatTime(secs) {
+    const s = Math.floor(secs);
+    const m = Math.floor(s / 60);
+    const rem = s % 60;
+    return m + ':' + (rem < 10 ? '0' : '') + rem;
+  }
+ 
+  function startTimestampPolling() {
+    player.getDuration().then(function(dur) {
+      videoDuration.textContent = formatTime(dur);
+    });
+    setInterval(function() {
+      player.getCurrentTime().then(function(t) {
+        videoCurrent.textContent = formatTime(t);
+      });
+    }, 500);
+  }
+ 
+  player.ready().then(startTimestampPolling);
  
   skipBtn.addEventListener('click', advanceVideoTrack);
   player.on('ended', advanceVideoTrack);
