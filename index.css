@@ -1,3 +1,4 @@
+
 #autoplay-policy-notice {
   display: none !important;
 }
@@ -221,11 +222,16 @@
  
 .timestamp-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 6px;
   font-size: 0.7rem;
   font-family: 'Courier New', Courier, monospace;
   color: rgba(255, 255, 255, 0.45);
   padding: 2px 0 0 0;
+}
+ 
+.timestamp-sep {
+  color: rgba(255, 255, 255, 0.25);
 }
  
  
