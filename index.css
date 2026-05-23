@@ -1,4 +1,3 @@
-
 #autoplay-policy-notice {
   display: none !important;
 }
@@ -269,37 +268,44 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
  
-/* --- SKIP BUTTON --- */
+/* --- CONTROL BUTTONS ROW --- */
 .control-action-panel {
   padding: 2px 0;
+  display: flex;
+  gap: 8px;
 }
  
-.action-btn {
+.action-btn-sm {
   background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  padding: 12px 24px;
-  width: 100%;
-  font-size: 0.78rem;
+  padding: 10px 0;
+  flex: 1;
+  font-size: 0.7rem;
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
  
-.action-btn:hover {
+.action-btn-sm:hover {
   background: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.4);
   transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
 }
  
-.action-btn:active {
+.action-btn-sm:active {
   transform: translateY(0);
+}
+ 
+.action-btn-sm[data-active="true"] {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
 }
  
 /* --- SOCIAL LINKS --- */
