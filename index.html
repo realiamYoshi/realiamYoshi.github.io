@@ -5,179 +5,247 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-
+ 
 <div id="autoplay-policy-notice">
 # I can use Vimeo instead of local files so I can bypass the default browser autoplay policy, which requires user interaction to start audio playback. By using Vimeo's player, I can set the video to autoplay and loop without being muted, and then unmute it on the first user interaction.
 </div>
-
+ 
 <div id="enter-overlay" class="splash-screen">
   <div class="enter-content">
     <button id="enter-btn">CLICK TO ENTER</button>
   </div>
 </div>
-
+ 
 <audio id="bg-music-player" loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
-
+ 
 <div class="profile-card-container">
   <div class="profile-card">
     <div class="profile-avatar">
       <div class="avatar-fallback">Y</div>
     </div>
-    
+ 
     <h1 class="profile-title">Yoshi</h1>
     <p class="profile-subtitle">Developer | Verified</p>
-    
+ 
     <div class="profile-divider"></div>
-
-    <div class="control-action-panel">
-      <button id="skip-track-btn" class="action-btn">SKIP BACKGROUND VIDEO</button>
+ 
+    <!-- Now playing display -->
+    <div class="now-playing-block">
+      <span class="now-playing-label">NOW PLAYING</span>
+      <span class="now-playing-title" id="now-playing-title">...</span>
     </div>
-
+ 
     <div class="profile-divider"></div>
-
+ 
+    <!-- Volume controls centered in the middle of the card -->
     <div class="audio-mixer-console">
       <div class="mixer-channel">
-        <label for="video-vol">Video Volume</label>
-        <input type="range" id="video-vol" min="0" max="1" step="0.05" value="0.5">
+        <div class="mixer-row">
+          <label for="video-vol">Video</label>
+          <span class="vol-value" id="video-vol-val">50%</span>
+        </div>
+        <input type="range" id="video-vol" min="0" max="1" step="0.01" value="0.5">
       </div>
       <div class="mixer-channel">
-        <label for="music-vol">Music Volume</label>
-        <input type="range" id="music-vol" min="0" max="1" step="0.05" value="0.5">
+        <div class="mixer-row">
+          <label for="music-vol">Music</label>
+          <span class="vol-value" id="music-vol-val">50%</span>
+        </div>
+        <input type="range" id="music-vol" min="0" max="1" step="0.01" value="0.5">
       </div>
     </div>
-
+ 
     <div class="profile-divider"></div>
-    
+ 
+    <!-- Skip button -->
+    <div class="control-action-panel">
+      <button id="skip-track-btn" class="action-btn">⏭ SKIP VIDEO</button>
+    </div>
+ 
+    <div class="profile-divider"></div>
+ 
     <div class="social-links-grid">
-      <a href="#" class="social-icon-link" title="Discord">
-        <span>Discord</span>
-      </a>
-      <a href="#" class="social-icon-link" title="GitHub">
-        <span>GitHub</span>
-      </a>
-      <a href="#" class="social-icon-link" title="Instagram">
-        <span>Instagram</span>
-      </a>
-      <a href="#" class="social-icon-link" title="X">
-        <span>X</span>
-      </a>
+      <a href="#" class="social-icon-link" title="Discord"><span>Discord</span></a>
+      <a href="#" class="social-icon-link" title="GitHub"><span>GitHub</span></a>
+      <a href="#" class="social-icon-link" title="Instagram"><span>Instagram</span></a>
+      <a href="#" class="social-icon-link" title="X"><span>X</span></a>
     </div>
   </div>
 </div>
-
+ 
 <div class="video-background-container">
-  <div class="video-background" id="vimeo-player">
-    </div>
+  <div class="video-background" id="vimeo-player"></div>
 </div>
-
+ 
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-  // The base sequence of numbers extracted from your layout, boss man!
   let videoSequence = [
-    1194070125, // Video 1
-    1194831059, // Video 2 (Playboi Carti - Celine Molly My Bean [guitar cover])
-    1194831731  // Video 3 (Playboi Carti - Molly (Destxmido Remix))
+    1194070125,
+    1194831059,
+    1194831731
   ];
-
-  // Mathematical randomization engine - shuffles the numerical index completely on runtime boot
+ 
   videoSequence.sort(() => Math.random() - 0.5);
-
+ 
   let currentTrackIndex = 0;
-
-  // Swapped out background: true parameter so the API unblocks volume modulation hooks cleanly!
+  let hasEntered = false;
+ 
+  // Start NOT muted, volume 0 — avoids the pop/noise that muted->unmute causes
   const options = {
     id: videoSequence[currentTrackIndex],
-    autoplay: true,
-    muted: true, // Must start at 1 to smash through browser policy blocks
+    autoplay: false,
+    muted: false,   // NOT muted — muted+unmute is what causes the click noise
+    volume: 0,      // Silent on init, we fade in after user gesture
     loop: false,
-    controls: false, // Disables bottom control layout bar
-    playsinline: true
+    controls: false,
+    playsinline: true,
+    background: false
   };
-
-  // Grab elements by their IDs
+ 
   const playerContainer = document.getElementById('vimeo-player');
   const player = new Vimeo.Player(playerContainer, options);
   const bgMusic = document.getElementById('bg-music-player');
-
+ 
   const enterOverlay = document.getElementById('enter-overlay');
   const enterBtn = document.getElementById('enter-btn');
   const skipBtn = document.getElementById('skip-track-btn');
-  
+ 
   const videoVolSlider = document.getElementById('video-vol');
   const musicVolSlider = document.getElementById('music-vol');
-
-  // Set initial internal volume configurations to 0.5 (50%)
-  bgMusic.volume = 0.5;
-
-  // Triggered the absolute instant the user smashes that enter control
-  enterBtn.addEventListener('click', function() {
-    enterOverlay.classList.add('fade-out');
-    
-    setTimeout(function() {
-      enterOverlay.style.display = 'none';
-    }, 500);
-
-    // 1. Unmute and play the background video mix channel
-    player.setMuted(0).then(function() {
-      player.setVolume(videoVolSlider.value);
-      player.play();
-    }).catch(function(error) {
-      console.error('Shit, video audio failed to spin up:', error);
-      player.play();
+  const videoVolVal = document.getElementById('video-vol-val');
+  const musicVolVal = document.getElementById('music-vol-val');
+  const nowPlayingTitle = document.getElementById('now-playing-title');
+ 
+  bgMusic.volume = 0; // Start silent, fade in on enter
+ 
+  // Smooth volume fade — avoids hard pops
+  function fadeVolume(getter, setter, targetVol, durationMs) {
+    const steps = 40;
+    const interval = durationMs / steps;
+    let step = 0;
+ 
+    const tick = setInterval(async () => {
+      step++;
+      const current = typeof getter === 'function' ? await getter() : getter;
+      const next = current + (targetVol - current) * (step / steps);
+      typeof setter === 'function' ? setter(next) : (setter.volume = next);
+      if (step >= steps) clearInterval(tick);
+    }, interval);
+  }
+ 
+  // Fetch and display the current video title
+  function updateNowPlaying() {
+    player.getVideoTitle().then(function(title) {
+      nowPlayingTitle.textContent = title || 'Unknown';
+    }).catch(function() {
+      nowPlayingTitle.textContent = 'Unknown';
     });
-
-    // 2. Fire up the independent background music pipeline channel simultaneously
-    bgMusic.play().catch(function(error) {
-      console.error('Shit, background music playback blocked:', error);
-    });
-  });
-
-  // --- AUDIO CONTROLLER INPUT VECTOR INTERCEPTORS ---
-  // Real-time tracking loop for the Video Channel volume
-  videoVolSlider.addEventListener('input', function() {
-    const targetVolume = parseFloat(this.value);
-    player.setVolume(targetVolume).catch(function(error) {
-      console.error('Shit, could not alter vimeo node volume:', error);
-    });
-  });
-
-  // Real-time tracking loop for the Background Music Channel volume
-  musicVolSlider.addEventListener('input', function() {
-    bgMusic.volume = this.value;
-  });
-
-  // --- CORE SKIP INTERCEPT MODULE ---
-  function advanceVideoTrack() {
-    currentTrackIndex++;
-    
-    if (currentTrackIndex < videoSequence.length) {
-      player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
-        player.play();
-        player.setMuted(0);
-        player.setVolume(videoVolSlider.value); // Syncs slider step immediately
-      }).catch(function(error) {
-        console.error('Shit, next video failed to load:', error);
+  }
+ 
+  function loadAndPlay(videoId) {
+    nowPlayingTitle.textContent = '...';
+    player.loadVideo(videoId).then(function() {
+      player.setVolume(0).then(function() {
+        player.play().then(function() {
+          // Fade in to slider value after load — clean, no pop
+          const target = parseFloat(videoVolSlider.value);
+          let vol = 0;
+          const steps = 30;
+          let i = 0;
+          const t = setInterval(function() {
+            i++;
+            vol = target * (i / steps);
+            player.setVolume(vol);
+            if (i >= steps) clearInterval(t);
+          }, 30);
+          updateNowPlaying();
+        });
       });
-    } else {
-      // Re-shuffle vector array to keep it completely dynamic
-      videoSequence.sort(() => Math.random() - 0.5);
-      currentTrackIndex = 0;
-      player.loadVideo(videoSequence[currentTrackIndex]).then(function() {
-        player.play();
-        player.setMuted(0);
-        player.setVolume(videoVolSlider.value);
+    }).catch(function(e) {
+      console.error('Video load failed:', e);
+    });
+  }
+ 
+  enterBtn.addEventListener('click', function() {
+    if (hasEntered) return;
+    hasEntered = true;
+ 
+    enterOverlay.classList.add('fade-out');
+    setTimeout(function() { enterOverlay.style.display = 'none'; }, 500);
+ 
+    // Play video from vol 0, fade in — eliminates the pop
+    player.setVolume(0).then(function() {
+      player.play().then(function() {
+        const target = parseFloat(videoVolSlider.value);
+        let vol = 0;
+        const steps = 30;
+        let i = 0;
+        const t = setInterval(function() {
+          i++;
+          vol = target * (i / steps);
+          player.setVolume(vol);
+          if (i >= steps) clearInterval(t);
+        }, 30);
+        updateNowPlaying();
+      }).catch(function(e) {
+        console.error('Video play failed:', e);
+      });
+    });
+ 
+    // Fade in bg music
+    bgMusic.volume = 0;
+    bgMusic.play().then(function() {
+      const target = parseFloat(musicVolSlider.value);
+      let vol = 0;
+      const steps = 30;
+      let i = 0;
+      const t = setInterval(function() {
+        i++;
+        bgMusic.volume = target * (i / steps);
+        if (i >= steps) clearInterval(t);
+      }, 30);
+    }).catch(function(e) {
+      console.error('Music play failed:', e);
+    });
+  });
+ 
+  // Volume sliders — live update with % display
+  videoVolSlider.addEventListener('input', function() {
+    const v = parseFloat(this.value);
+    videoVolVal.textContent = Math.round(v * 100) + '%';
+    if (hasEntered) {
+      player.setVolume(v).catch(function(e) {
+        console.error('Video volume set failed:', e);
       });
     }
+  });
+ 
+  musicVolSlider.addEventListener('input', function() {
+    const v = parseFloat(this.value);
+    musicVolVal.textContent = Math.round(v * 100) + '%';
+    bgMusic.volume = v;
+  });
+ 
+  // Skip logic
+  function advanceVideoTrack() {
+    currentTrackIndex++;
+    if (currentTrackIndex >= videoSequence.length) {
+      videoSequence.sort(() => Math.random() - 0.5);
+      currentTrackIndex = 0;
+    }
+    if (hasEntered) {
+      loadAndPlay(videoSequence[currentTrackIndex]);
+    } else {
+      player.loadVideo(videoSequence[currentTrackIndex]);
+    }
   }
-
-  // Hook skip handler to user click
+ 
   skipBtn.addEventListener('click', advanceVideoTrack);
-
-  // Auto advance tracking loop hook
   player.on('ended', advanceVideoTrack);
 </script>
-
+ 
 </body>
 </html>
+ 
