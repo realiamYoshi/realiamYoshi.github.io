@@ -195,6 +195,32 @@
  
   skipBtn.addEventListener('click', advanceVideoTrack);
   player.on('ended', advanceVideoTrack);
+ 
+  // Auto-scale Vimeo iframe to always cover full viewport (like object-fit: cover)
+  function scaleVimeo() {
+    const iframe = playerContainer.querySelector('iframe');
+    if (!iframe) return;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    // 16:9 — figure out which dimension is the constraint
+    const scaleW = vw / 16;
+    const scaleH = vh / 9;
+    const scale = Math.max(scaleW, scaleH);
+    const w = scale * 16;
+    const h = scale * 9;
+    iframe.style.width  = w + 'px';
+    iframe.style.height = h + 'px';
+    iframe.style.position = 'absolute';
+    iframe.style.left = ((vw - w) / 2) + 'px';
+    iframe.style.top  = ((vh - h) / 2) + 'px';
+  }
+ 
+  // Run once player is ready, then on every resize
+  player.ready().then(scaleVimeo);
+  window.addEventListener('resize', scaleVimeo);
+  // Retry a couple times in case iframe isn't injected yet on ready
+  setTimeout(scaleVimeo, 500);
+  setTimeout(scaleVimeo, 1500);
 </script>
  
 </body>
